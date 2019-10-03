@@ -1,0 +1,32 @@
+* Main Idea
+  A simple script that will let you download and apply someone else's config files with optional rollbacks. Create packages by copying required files to directory but have them come in relative to top level. ie:
+
+currently managing the files `~/.tmux.conf` and `$XDG_CONFIG_HOME/i3/config`. When `commiting` these, simply copy them to say `$XDG_CONFIG_HOME/swat/repo/` for a structure of:
+
+  - repo/
+    - .tmux.conf
+    - .config/i3/config
+
+  - Also have ideas for pluggable drivers(?) to allow for customization of how files are discovered/managed
+    - is this needed with manual `swat track` style commands?
+
+* Ideas
+  - Both bitbucket and github support downloading public repos as tarballs
+  - So have it default to github and a repo named `config`, you simply pass in username
+  - When applying someone's config take a snapshot for backup
+  - need a method of specifying what files to take or not take
+    - maybe a .swatrc or similar?
+    - Maybe we rely entirely upon whats in the repo
+  - when doing an apply, make a snapshot of all the files it would over-write. This can be grabbed by doing a `tar -tf apply.tar`
+  -
+  - Example commands:
+    - `swat snapshot` - take a snapshot tarball of current files
+    - `swat commit` - if managing a local repo, copy (maybe not copies but hard links?) then commit said files
+    - `swat apply username` - grab `https://github.com/<username>/<repo>/tarball/master`
+      - to update you just have to re-run apply username, keep the downloaded tarball as the `username + Y-m-d` in the snapshots dir to be able to apply this exact version again
+      - `swat apply username -b` same as above but grab from `https://bitbucket.org/<username>/<repo>/get/master.tar.gz`
+        - Bitbucket creates a top level, pass `--strip 1` to tar to kill off top level directory
+
+    - `swat track filename` - copies/links file into local repo
+      - find thing -type f will handle both cases if they pass in a directory or file
+    - `swat checkout username [--repo=]` attempt to checkout repo to have become managed tracking dir
