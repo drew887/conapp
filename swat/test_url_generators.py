@@ -1,9 +1,9 @@
 import unittest
-from url_generators import get_bitbucket_url, get_github_url
+from swat.url_generators import get_bitbucket_url, get_github_url
 
 
 class BitBucketGenerationTestCase(unittest.TestCase):
-    def test_full_defualt(self):
+    def test_full_default(self):
         generated = get_bitbucket_url("user")
         expected = "https://bitbucket.org/user/config/get/master.tar.gz"
 
