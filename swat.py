@@ -3,8 +3,10 @@
 import argparse
 import os
 import sys
+import url_generators
 
 from typing import List, Tuple, Union
+from enum import Enum
 
 # parser = argparse.ArgumentParser(description='Process some integers.')
 # parser.add_argument('integers', metavar='N', type=int, nargs='+',
@@ -19,6 +21,11 @@ from typing import List, Tuple, Union
 TAR_CREATE_FLAGS = [
     'c', 'v', 'z'
 ]
+
+
+class Hosts(Enum):
+    BITBUCKET = 'B'
+    GITHUB = 'G'
 
 
 def get_tar_cmd(*args, flags: List[Union[Tuple[str, str], str]]) -> str:
@@ -37,9 +44,53 @@ def get_tar_cmd(*args, flags: List[Union[Tuple[str, str], str]]) -> str:
     return result + ' '.join(args)
 
 
-def main():
-    print(get_tar_cmd("sdfs", flags=TAR_CREATE_FLAGS))
+def main(args: argparse.Namespace) -> None:
+    print(args)
+    test = url_generators.get_bitbucket_url
+
+    if (args.host == Hosts.GITHUB):
+        test = url_generators.get_github_url
+
+
+    print(test(args.user))
+
+
+def getArgs() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description='a Shitty Wrapper Around Tar')
+
+    parser.add_argument(
+        '-u',
+        '--user',
+        required=True,
+        help='username to pull from'
+    )
+    parser.add_argument(
+        '-r',
+        '--repo',
+        default='config',
+        help='repo name to pull, defaults to config'
+    )
+    parser.add_argument(
+        '-b',
+        '--bitbucket',
+        action='store_const',
+        dest='host',
+        default=Hosts.GITHUB,
+        const=Hosts.BITBUCKET,
+        help='pull from bitbucket'
+    )
+    parser.add_argument(
+        '-g',
+        '--github',
+        action='store_const',
+        dest='host',
+        default=Hosts.GITHUB,
+        const=Hosts.GITHUB,
+        help='pull from bitbucket'
+    )
+
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
-    main()
+    main(getArgs())
