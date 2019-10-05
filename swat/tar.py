@@ -1,5 +1,9 @@
 from typing import List, Tuple, Union
 
+TAR_CREATE_FLAGS = [
+    'c', 'v', 'z'
+]
+
 
 def get_tar_cmd(*args, flags: List[Union[Tuple[str, str], str]]) -> str:
     """
@@ -14,4 +18,4 @@ def get_tar_cmd(*args, flags: List[Union[Tuple[str, str], str]]) -> str:
         else:
             result = result + f"-{flag[0]} {flag[1]} "
 
-    return result + ' '.join(args)
+    return (result + ' '.join(args)).strip()
