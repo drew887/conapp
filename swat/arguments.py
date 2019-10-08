@@ -3,6 +3,22 @@ import argparse
 from swat.definitions import *
 
 
+def validate_apply(args: argparse.Namespace) -> bool:
+    if args.user is None:
+        print("Error, apply requires a user to be passed")
+        return False
+
+    return True
+
+
+COMMANDS = {
+    'apply': validate_apply,
+    # 'track': 2,
+    # 'commit': 3,
+    # 'checkout': 4
+}
+
+
 def validate_args(args: argparse.Namespace) -> bool:
     command = COMMANDS.get(args.command, None)
 
@@ -13,7 +29,7 @@ def validate_args(args: argparse.Namespace) -> bool:
         )
         return False
 
-    return True
+    return command(args)
 
 
 def get_args() -> argparse.Namespace:
