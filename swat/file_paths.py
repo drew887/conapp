@@ -1,5 +1,7 @@
 import os
 
+from datetime import datetime
+
 CONFIG_DIR = os.environ.get('XDG_CONFIG_HOME', os.path.expanduser("~/")) + ".config/swat"
 CONFIG_DIR_REPO = "repo"
 CONFIG_DIR_SNAPSHOT = "snapshots"
@@ -18,6 +20,13 @@ CONFIG_DIRS = [
 # TODO: Abstract repo default into a constant somewhere
 def get_repo_dir(user: str, repo: str) -> str:
     return get_config_dir(CONFIG_DIR_REPO) + "/" + user + "/" + repo
+
+
+def get_snapshot_filename() -> str:
+    return get_config_dir(CONFIG_DIR_SNAPSHOT) \
+           + "/" \
+           + datetime.now().strftime("%Y-%m-%d.%H-%M-%S") \
+           + ".tar.gz"
 
 
 def check_dirs(user: str, repo: str) -> bool:

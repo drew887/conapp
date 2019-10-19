@@ -12,6 +12,10 @@ class TestGetTarCmd(unittest.TestCase):
 
         self.assertEqual(expected, get_tar_cmd(flags=[('f', 'test')]))
 
+    def test_both_flags(self):
+        expected = "tar -c -v -f test"
+
+        self.assertEqual(expected, get_tar_cmd(flags=['c', 'v' , ('f', 'test')]))
 
 if __name__ == '__main__':
     unittest.main()
