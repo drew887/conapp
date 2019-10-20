@@ -1,4 +1,4 @@
-from swat.definitions import Hosts
+from conapp.definitions import Hosts
 
 
 def get_bitbucket_url(user: str, repo: str = "config", commit: str = "master") -> str:

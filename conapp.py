@@ -2,10 +2,10 @@
 
 import argparse
 import urllib.request
-from swat.arguments import validate_args, get_args
-from swat.url_generators import RESOLVERS
-from swat.file_paths import *
-from swat.tar import get_tar_cmd
+from conapp.arguments import validate_args, get_args
+from conapp.url_generators import RESOLVERS
+from conapp.file_paths import *
+from conapp.tar import get_tar_cmd
 import subprocess
 import os
 

@@ -1,5 +1,5 @@
 import unittest
-from swat.tar import get_tar_cmd, TAR_CREATE_FLAGS
+from conapp.tar import get_tar_cmd, TAR_CREATE_FLAGS
 
 
 class TestGetTarCmd(unittest.TestCase):

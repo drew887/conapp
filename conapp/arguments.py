@@ -1,6 +1,6 @@
 import argparse
 
-from swat.definitions import *
+from conapp.definitions import *
 
 
 def validate_apply(args: argparse.Namespace) -> bool:
