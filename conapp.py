@@ -41,8 +41,12 @@ def create_snapshot(file_name):
               f"| return code is: {tar_command_result.returncode}")
         exit(tar_command_result.returncode)
 
-    files = tar_command_result.stdout.split()
-    files = list(map(lambda x: f"{x}", filter(lambda x: x is not "/", files)))
+    files = list(
+        filter(
+            lambda file_path: os.path.isfile(os.path.expanduser(f"~/{file_path}")),
+            tar_command_result.stdout.split()
+        )
+    )
 
     print(' '.join([
         'tar',
