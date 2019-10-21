@@ -2,7 +2,7 @@ import os
 
 from datetime import datetime
 
-CONFIG_DIR = os.environ.get('XDG_CONFIG_HOME', os.path.expanduser("~/")) + ".config/swat"
+CONFIG_DIR = os.environ.get('XDG_CONFIG_HOME', os.path.expanduser("~/")) + ".config/conapp"
 CONFIG_DIR_REPO = "repo"
 CONFIG_DIR_SNAPSHOT = "snapshots"
 

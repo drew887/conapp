@@ -1,18 +1,17 @@
 import argparse
 
-from swat.definitions import *
+from conapp.definitions import *
 
 
 def validate_apply(args: argparse.Namespace) -> bool:
-    if args.user is None:
-        print("Error, apply requires a user to be passed")
-        return False
-
+    # Nothing extra to do yet
     return True
 
 
+APPLY_COMMAND = 'apply'
+
 COMMANDS = {
-    'apply': validate_apply,
+    APPLY_COMMAND: validate_apply,
     # 'track': 2,
     # 'commit': 3,
     # 'checkout': 4
@@ -33,11 +32,29 @@ def validate_args(args: argparse.Namespace) -> bool:
 
 
 def get_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description='a Shitty Wrapper Around Tar')
+    parser = argparse.ArgumentParser(description='conapp a simple Config Applier')
+    parser.set_defaults(command=None)
 
+    subparsers = parser.add_subparsers(
+        title="Commands",
+        description="Valid commands",
+        help="sub-command help",
+    )
+
+    apply_group = subparsers.add_parser(APPLY_COMMAND, help="apply a config")
+
+    setup_apply_arguments(apply_group)
+    # TODO: Add other commands
+
+    return parser.parse_args()
+
+
+def setup_apply_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
+    parser.set_defaults(command=APPLY_COMMAND)
     parser.add_argument(
         '-u',
         '--user',
+        required=True,
         help='username to pull from'
     )
     parser.add_argument(
@@ -45,6 +62,11 @@ def get_args() -> argparse.Namespace:
         '--repo',
         default='config',
         help='repo name to pull, defaults to config'
+    )
+    parser.add_argument(
+        '--no-download',
+        action='store_true',
+        help='Use already downloaded copy'
     )
     parser.add_argument(
         '-b',
@@ -64,9 +86,5 @@ def get_args() -> argparse.Namespace:
         const=Hosts.GITHUB,
         help='pull from bitbucket'
     )
-    parser.add_argument(
-        'command',
-        nargs='?'
-    )
 
-    return parser.parse_args()
+    return parser
