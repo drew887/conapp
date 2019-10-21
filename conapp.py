@@ -5,18 +5,18 @@ import urllib.request
 from conapp.arguments import validate_args, get_args
 from conapp.url_generators import RESOLVERS
 from conapp.file_paths import *
-from conapp.tar import get_tar_cmd
+from conapp.validate import validate_subprocess
 import subprocess
 import os
 
 
 def apply_snapshot(file_name: str) -> None:
-    print(get_tar_cmd(flags=[
-        'z',
-        'v',
-        'x',
-        ('f', file_name),
-        ('C', '~/')
+    print(' '.join([
+        'tar '
+        '-zvxf',
+        file_name,
+        '-C',
+        '~/'
     ]))
 
 
@@ -28,34 +28,41 @@ def create_snapshot(file_name):
         '-tf',
         file_name
     ]
-    tar_command_result = subprocess.run(
+    get_file_names_command_result = subprocess.run(
         get_file_names_command,
         text=True,
         capture_output=True
     )
 
-    if tar_command_result.returncode is not 0:
-        print(f"Error while running tar command!!!\n"
-              f"| Command was: {' '.join(get_file_names_command)}\n"
-              f"| Error was: {tar_command_result.stderr}\n"
-              f"| return code is: {tar_command_result.returncode}")
-        exit(tar_command_result.returncode)
+    validate_subprocess(get_file_names_command_result)
 
     files = list(
         filter(
             lambda file_path: os.path.isfile(os.path.expanduser(f"~/{file_path}")),
-            tar_command_result.stdout.split()
+            get_file_names_command_result.stdout.split()
         )
     )
 
-    print(' '.join([
-        'tar',
-        '-C',
-        os.path.expanduser('~'),
-        '-czvf',
-        get_snapshot_filename(),
-        ' '.join(files)
-    ]))
+    if len(files) > 0:
+        print("Local files would get overridden, creating backup of: " + ' '.join(files))
+
+        backup_command = [
+            'tar',
+            '-C',
+            os.path.expanduser('~'),
+            '-czvf',
+            get_snapshot_filename(),
+
+        ] + files
+
+        validate_subprocess(subprocess.run(
+            backup_command,
+            text=True,
+            capture_output=True
+        ))
+
+    else:
+        print("No files will be overridden, not creating backup")
 
 
 def main(args: argparse.Namespace) -> None:
