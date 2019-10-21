@@ -6,24 +6,32 @@ from conapp.arguments import validate_args, get_args
 from conapp.url_generators import RESOLVERS
 from conapp.file_paths import *
 from conapp.validate import validate_subprocess
+from conapp.definitions import DEFAULT_STRIP_COMPONENTS
 import subprocess
 import os
 
+USER_HOME_DIR = os.path.expanduser('~')
+
 
 def apply_snapshot(file_name: str) -> None:
-    print(' '.join([
-        'tar '
-        '-zvxf',
-        file_name,
-        '-C',
-        '~/'
-    ]))
+    print(f"Applying snapshot {file_name}")
+    validate_subprocess(
+        subprocess.run([
+            'tar',
+            '-C',
+            USER_HOME_DIR,
+            DEFAULT_STRIP_COMPONENTS,
+            '--show-transformed-names',
+            '-zvxf',
+            file_name,
+        ])
+    )
 
 
 def create_snapshot(file_name):
     get_file_names_command = [
         "tar",
-        '--strip-components=1',
+        DEFAULT_STRIP_COMPONENTS,
         '--show-transformed-names',
         '-tf',
         file_name
@@ -48,7 +56,7 @@ def create_snapshot(file_name):
         backup_command = [
                              'tar',
                              '-C',
-                             os.path.expanduser('~'),
+                             USER_HOME_DIR,
                              '-czvf',
                              snapshot_name,
                          ] + files
