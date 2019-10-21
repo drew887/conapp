@@ -75,10 +75,20 @@ def main(args: argparse.Namespace) -> None:
         print("creating config dirs...")
         create_dirs(args.user, args.repo)
 
-    url = RESOLVERS.get(args.host)(args.user, args.repo)
     file_name = get_repo_dir(args.user, args.repo) + "/" + f"{args.user}.{args.repo}.tar.gz"
 
-    # download_file(file_name, url)
+    if args.no_download and os.path.isfile(file_name):
+        print(f"no-download passed, applying local file {file_name}")
+    else:
+        if args.no_download:
+            print("Error: no-download passed but no local copy to apply!")
+            exit(2)
+        else:
+            download_file(
+                file_name,
+                RESOLVERS.get(args.host)(args.user, args.repo)
+            )
+
     create_snapshot(file_name)
     apply_snapshot(file_name)
 

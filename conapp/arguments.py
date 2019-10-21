@@ -4,10 +4,7 @@ from conapp.definitions import *
 
 
 def validate_apply(args: argparse.Namespace) -> bool:
-    if args.user is None:
-        print("Error, apply requires a user to be passed")
-        return False
-
+    # Nothing extra to do yet
     return True
 
 
@@ -45,25 +42,33 @@ def get_args() -> argparse.Namespace:
     )
 
     apply_group = subparsers.add_parser(APPLY_COMMAND, help="apply a config")
-    apply_group.set_defaults(command=APPLY_COMMAND)
-    apply_group.add_argument(
+
+    setup_apply_arguments(apply_group)
+    # TODO: Add other commands
+
+    return parser.parse_args()
+
+
+def setup_apply_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
+    parser.set_defaults(command=APPLY_COMMAND)
+    parser.add_argument(
         '-u',
         '--user',
         required=True,
         help='username to pull from'
     )
-    apply_group.add_argument(
+    parser.add_argument(
         '-r',
         '--repo',
         default='config',
         help='repo name to pull, defaults to config'
     )
-    apply_group.add_argument(
+    parser.add_argument(
         '--no-download',
         action='store_true',
         help='Use already downloaded copy'
     )
-    apply_group.add_argument(
+    parser.add_argument(
         '-b',
         '--bitbucket',
         action='store_const',
@@ -72,7 +77,7 @@ def get_args() -> argparse.Namespace:
         const=Hosts.BITBUCKET,
         help='pull from bitbucket'
     )
-    apply_group.add_argument(
+    parser.add_argument(
         '-g',
         '--github',
         action='store_const',
@@ -82,4 +87,4 @@ def get_args() -> argparse.Namespace:
         help='pull from bitbucket'
     )
 
-    return parser.parse_args()
+    return parser
