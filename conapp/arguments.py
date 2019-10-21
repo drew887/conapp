@@ -11,8 +11,10 @@ def validate_apply(args: argparse.Namespace) -> bool:
     return True
 
 
+APPLY_COMMAND = 'apply'
+
 COMMANDS = {
-    'apply': validate_apply,
+    APPLY_COMMAND: validate_apply,
     # 'track': 2,
     # 'commit': 3,
     # 'checkout': 4
@@ -33,20 +35,35 @@ def validate_args(args: argparse.Namespace) -> bool:
 
 
 def get_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description='a Shitty Wrapper Around Tar')
+    parser = argparse.ArgumentParser(description='conapp a simple Config Applier')
+    parser.set_defaults(command=None)
 
-    parser.add_argument(
+    subparsers = parser.add_subparsers(
+        title="Commands",
+        description="Valid commands",
+        help="sub-command help",
+    )
+
+    apply_group = subparsers.add_parser(APPLY_COMMAND, help="apply a config")
+    apply_group.set_defaults(command=APPLY_COMMAND)
+    apply_group.add_argument(
         '-u',
         '--user',
+        required=True,
         help='username to pull from'
     )
-    parser.add_argument(
+    apply_group.add_argument(
         '-r',
         '--repo',
         default='config',
         help='repo name to pull, defaults to config'
     )
-    parser.add_argument(
+    apply_group.add_argument(
+        '--no-download',
+        action='store_true',
+        help='Use already downloaded copy'
+    )
+    apply_group.add_argument(
         '-b',
         '--bitbucket',
         action='store_const',
@@ -55,7 +72,7 @@ def get_args() -> argparse.Namespace:
         const=Hosts.BITBUCKET,
         help='pull from bitbucket'
     )
-    parser.add_argument(
+    apply_group.add_argument(
         '-g',
         '--github',
         action='store_const',
@@ -63,10 +80,6 @@ def get_args() -> argparse.Namespace:
         default=Hosts.GITHUB,
         const=Hosts.GITHUB,
         help='pull from bitbucket'
-    )
-    parser.add_argument(
-        'command',
-        nargs='?'
     )
 
     return parser.parse_args()

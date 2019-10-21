@@ -44,22 +44,24 @@ def create_snapshot(file_name):
     )
 
     if len(files) > 0:
-        print("Local files would get overridden, creating backup of: " + ' '.join(files))
-
+        snapshot_name = get_snapshot_filename()
         backup_command = [
-            'tar',
-            '-C',
-            os.path.expanduser('~'),
-            '-czvf',
-            get_snapshot_filename(),
+                             'tar',
+                             '-C',
+                             os.path.expanduser('~'),
+                             '-czvf',
+                             snapshot_name,
+                         ] + files
 
-        ] + files
+        print(f"Local files would get overridden, creating backup of: {' '.join(files)}")
 
         validate_subprocess(subprocess.run(
             backup_command,
             text=True,
             capture_output=True
         ))
+
+        print(f"Successfully backed up files to {snapshot_name}")
 
     else:
         print("No files will be overridden, not creating backup")
