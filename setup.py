@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="conapp",
-    version="0.0.2",
+    version="0.0.3",
     author="drew887 Andrew Mcdonald",
     author_email="drew887121@gmail.com",
     description="A simple config applier",
@@ -19,4 +19,9 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
+    entry_points={
+        'console_scripts': [
+            'conapp = conapp.__main__:main'
+        ]
+    },
 )

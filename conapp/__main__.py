@@ -75,7 +75,8 @@ def create_snapshot(file_name):
         print("No files will be overridden, not creating backup")
 
 
-def main(args: argparse.Namespace) -> None:
+def main() -> None:
+    args = get_args()
     if not validate_args(args):
         exit(-1)
 
@@ -112,4 +113,4 @@ def download_file(file_name: str, url: str) -> None:
 
 
 if __name__ == "__main__":
-    main(get_args())
+    main()
