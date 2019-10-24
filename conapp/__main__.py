@@ -2,11 +2,11 @@
 
 import argparse
 import urllib.request
-from conapp.arguments import validate_args, get_args
-from conapp.url_generators import RESOLVERS
-from conapp.file_paths import *
-from conapp.validate import validate_subprocess
-from conapp.definitions import DEFAULT_STRIP_COMPONENTS
+from arguments import validate_args, get_args
+from url_generators import RESOLVERS
+from file_paths import *
+from validate import validate_subprocess
+from definitions import DEFAULT_STRIP_COMPONENTS
 import subprocess
 import os
 

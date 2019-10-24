@@ -1,4 +1,4 @@
-from conapp.definitions import Hosts
+from definitions import Hosts
 
 
 def get_bitbucket_url(user: str, repo: str = "config", commit: str = "master") -> str:
