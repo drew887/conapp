@@ -1,1 +1,0 @@
-name = "conapp - Config applier"
