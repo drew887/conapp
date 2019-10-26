@@ -1,29 +1,32 @@
 import argparse
 
-# from conapp.definitions import Hosts
 from conapp.commands import apply
 
 
-COMMANDS = {
+COMMAND_VALIDATORS = {
     apply.COMMAND: apply.validate,
     # 'track': 2,
     # 'commit': 3,
     # 'checkout': 4
 }
 
+COMMANDS = {
+    apply.COMMAND: apply.main
+}
+
 
 def validate_args(args: argparse.Namespace) -> bool:
     """Validate passed arguments; deprecated thanks to argparse"""
-    command = COMMANDS.get(args.command, None)
+    validator = COMMAND_VALIDATORS.get(args.command, None)
 
-    if command is None:
+    if validator is None:
         print(
             "Error command must be one of: \n" +
-            ' '.join(COMMANDS.keys())
+            ' '.join(COMMAND_VALIDATORS.keys())
         )
         return False
 
-    return command(args)
+    return validator(args)
 
 
 def get_args() -> argparse.Namespace:

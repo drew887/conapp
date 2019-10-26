@@ -59,6 +59,12 @@ def setup_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
         const=Hosts.GITHUB,
         help='pull from bitbucket'
     )
+    parser.add_argument(
+        '--dry-run',
+        action="store_true",
+        dest="dry_run",
+        help="Don't actually run"
+    )
 
     return parser
 
@@ -81,8 +87,11 @@ def main(args: argparse.Namespace) -> None:
                 RESOLVERS.get(args.host)(args.user, args.repo)
             )
 
-    create_snapshot(file_name)
-    apply_snapshot(file_name)
+    if args.dry_run:
+        print(f"dry run, applying {file_name}")
+    else:
+        create_snapshot(file_name)
+        apply_snapshot(file_name)
 
 
 def apply_snapshot(file_name: str) -> None:
