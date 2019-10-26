@@ -1,7 +1,8 @@
 import subprocess
 import sys
 
-def validate_subprocess(get_file_names_command_result: subprocess.CompletedProcess):
+
+def validate_subprocess(get_file_names_command_result: subprocess.CompletedProcess) -> bool:
     """Validate that a subprocess completed successfully or print output and exit"""
     if get_file_names_command_result.returncode != 0:
         print(f"Error while running a command!!!\n"
@@ -10,3 +11,5 @@ def validate_subprocess(get_file_names_command_result: subprocess.CompletedProce
               f"| return code is: {get_file_names_command_result.returncode}")
 
         sys.exit(get_file_names_command_result.returncode)
+
+    return True

@@ -9,7 +9,6 @@ from conapp.file_paths import get_repo_dir, get_snapshot_filename
 from conapp.validate import validate_subprocess
 from conapp.definitions import USER_HOME_DIR, DEFAULT_STRIP_COMPONENTS, Hosts
 
-
 COMMAND = 'apply'
 
 
@@ -73,7 +72,7 @@ def main(args: argparse.Namespace) -> None:
     """Download and Apply a snapshot"""
 
     file_name = get_repo_dir(args.user, args.repo) + \
-        "/" + f"{args.user}.{args.repo}.tar.gz"
+                "/" + f"{args.user}.{args.repo}.tar.gz"
 
     if args.no_download and os.path.isfile(file_name):
         print(f"no-download passed, applying local file {file_name}")
@@ -139,15 +138,14 @@ def create_snapshot(file_name):
     if len(files) > 0:
         snapshot_name = get_snapshot_filename()
         backup_command = [
-            'tar',
-            '-C',
-            USER_HOME_DIR,
-            '-czvf',
-            snapshot_name,
-        ] + files
+                             'tar',
+                             '-C',
+                             USER_HOME_DIR,
+                             '-czvf',
+                             snapshot_name,
+                         ] + files
 
-        print(
-            f"Local files would get overridden, creating backup of: {' '.join(files)}")
+        print(f"Local files would get overridden, creating backup of: {' '.join(files)}")
 
         validate_subprocess(subprocess.run(
             backup_command,
