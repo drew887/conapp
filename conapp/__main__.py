@@ -5,7 +5,7 @@ from conapp.file_paths import check_dirs, create_dirs
 
 
 def main() -> None:
-    args = get_args()
+    args = get_args(sys.argv)
 
     if not validate_args(args):
         sys.exit(1)
