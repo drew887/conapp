@@ -29,7 +29,7 @@ def validate_args(args: argparse.Namespace) -> bool:
     return validator(args)
 
 
-def get_args() -> argparse.Namespace:
+def get_args(args: list) -> argparse.Namespace:
     """Build an argparser and return a Namespace"""
 
     parser = argparse.ArgumentParser(description='conapp a simple Config Applier')
@@ -46,4 +46,4 @@ def get_args() -> argparse.Namespace:
     apply.setup_arguments(apply_group)
     # TODO: Add other commands
 
-    return parser.parse_args()
+    return parser.parse_args(args)
