@@ -1,5 +1,5 @@
 import unittest
-from conapp.url_generators import get_bitbucket_url, get_github_url
+from url_generators import get_bitbucket_url, get_github_url
 
 
 class BitBucketGenerationTestCase(unittest.TestCase):

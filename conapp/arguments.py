@@ -1,37 +1,37 @@
 import argparse
 
-from conapp.definitions import *
+from conapp.commands import apply
 
 
-def validate_apply(args: argparse.Namespace) -> bool:
-    # Nothing extra to do yet
-    return True
-
-
-APPLY_COMMAND = 'apply'
-
-COMMANDS = {
-    APPLY_COMMAND: validate_apply,
+COMMAND_VALIDATORS = {
+    apply.COMMAND: apply.validate,
     # 'track': 2,
     # 'commit': 3,
     # 'checkout': 4
 }
 
+COMMANDS = {
+    apply.COMMAND: apply.main
+}
+
 
 def validate_args(args: argparse.Namespace) -> bool:
-    command = COMMANDS.get(args.command, None)
+    """Validate passed arguments; deprecated thanks to argparse"""
+    validator = COMMAND_VALIDATORS.get(args.command, None)
 
-    if command is None:
+    if validator is None:
         print(
             "Error command must be one of: \n" +
-            ' '.join(COMMANDS.keys())
+            ' '.join(COMMAND_VALIDATORS.keys())
         )
         return False
 
-    return command(args)
+    return validator(args)
 
 
 def get_args() -> argparse.Namespace:
+    """Build an argparser and return a Namespace"""
+
     parser = argparse.ArgumentParser(description='conapp a simple Config Applier')
     parser.set_defaults(command=None)
 
@@ -41,50 +41,9 @@ def get_args() -> argparse.Namespace:
         help="sub-command help",
     )
 
-    apply_group = subparsers.add_parser(APPLY_COMMAND, help="apply a config")
+    apply_group = subparsers.add_parser(apply.COMMAND, help="apply a config")
 
-    setup_apply_arguments(apply_group)
+    apply.setup_arguments(apply_group)
     # TODO: Add other commands
 
     return parser.parse_args()
-
-
-def setup_apply_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
-    parser.set_defaults(command=APPLY_COMMAND)
-    parser.add_argument(
-        '-u',
-        '--user',
-        required=True,
-        help='username to pull from'
-    )
-    parser.add_argument(
-        '-r',
-        '--repo',
-        default='config',
-        help='repo name to pull, defaults to config'
-    )
-    parser.add_argument(
-        '--no-download',
-        action='store_true',
-        help='Use already downloaded copy'
-    )
-    parser.add_argument(
-        '-b',
-        '--bitbucket',
-        action='store_const',
-        dest='host',
-        default=Hosts.GITHUB,
-        const=Hosts.BITBUCKET,
-        help='pull from bitbucket'
-    )
-    parser.add_argument(
-        '-g',
-        '--github',
-        action='store_const',
-        dest='host',
-        default=Hosts.GITHUB,
-        const=Hosts.GITHUB,
-        help='pull from bitbucket'
-    )
-
-    return parser

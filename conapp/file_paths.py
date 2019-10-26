@@ -8,6 +8,7 @@ CONFIG_DIR_SNAPSHOT = "snapshots"
 
 
 def get_config_dir(dir: str) -> str:
+    """Get a directory prefixed in the config dir"""
     return CONFIG_DIR + '/' + dir
 
 
@@ -40,6 +41,9 @@ def check_dirs(user: str, repo: str) -> bool:
 
 
 def create_dirs(user: str, repo: str) -> None:
+    """
+    Create the directories required to operate
+    """
     user_dir = get_repo_dir(user, repo)
 
     for config_dir in CONFIG_DIRS + [user_dir]:
