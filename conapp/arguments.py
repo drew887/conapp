@@ -3,6 +3,11 @@ import sys
 
 from conapp.commands import apply, snapshots
 
+COMMANDS = [
+    apply,
+    snapshots
+]
+
 
 def get_args(args: list) -> argparse.Namespace:
     """Build an argparser and return a Namespace"""
@@ -10,17 +15,15 @@ def get_args(args: list) -> argparse.Namespace:
     parser = argparse.ArgumentParser(prog='conapp', description='conapp a simple Config Applier')
     parser.set_defaults(command=None)
 
-    subparsers = parser.add_subparsers(
+    sub_parser = parser.add_subparsers(
         title="Commands",
         description="Valid commands",
         help="sub-command help",
     )
 
-    apply_group = subparsers.add_parser(apply.COMMAND, help="apply a config")
-    snapshot_group = subparsers.add_parser(snapshots.COMMAND, help="manage snapshots")
+    for command in COMMANDS:
+        command.setup_arguments(sub_parser)
 
-    apply.setup_arguments(apply_group)
-    snapshots.setup_arguments(snapshot_group)
     # TODO: Add other commands
 
     args = parser.parse_args(args=args)

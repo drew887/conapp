@@ -3,16 +3,9 @@ import argparse
 COMMAND = 'snapshots'
 
 
-def identity(x):
-    return x
+def setup_arguments(sub_parser) -> argparse.ArgumentParser:
+    parser = sub_parser.add_parser(COMMAND, help="manage snapshots")
 
-
-COMMANDS = {
-    'list': identity
-}
-
-
-def setup_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
     parser.set_defaults(command=main)
 
     subparsers = parser.add_subparsers(

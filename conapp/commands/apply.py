@@ -12,10 +12,12 @@ from conapp.file_paths import check_dirs, create_dirs
 
 COMMAND = 'apply'
 
-def setup_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
+
+def setup_arguments(sub_parser) -> argparse.ArgumentParser:
     """
     Setup the arguments for the apply command
     """
+    parser = sub_parser.add_parser(COMMAND, help="apply a config")
 
     parser.set_defaults(command=main)
     parser.add_argument(

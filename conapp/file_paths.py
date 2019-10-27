@@ -30,19 +30,19 @@ def get_snapshot_filename() -> str:
            + ".tar.gz"
 
 
-def check_dirs(extra_dirs: list = []) -> bool:
-    for config_dir in CONFIG_DIRS + extra_dirs:
+def check_dirs(dirs: list = CONFIG_DIRS) -> bool:
+    for config_dir in dirs:
         if not os.path.isdir(config_dir):
             return False
 
     return True
 
 
-def create_dirs(extra_dirs: list = []) -> None:
+def create_dirs(dirs: list = CONFIG_DIRS) -> None:
     """
     Create the directories required to operate
     """
-    for config_dir in CONFIG_DIRS + extra_dirs:
+    for config_dir in dirs:
         try:
             os.makedirs(config_dir)
         except FileExistsError:
