@@ -1,38 +1,13 @@
 import argparse
+import sys
 
-from conapp.commands import apply
-
-
-COMMAND_VALIDATORS = {
-    apply.COMMAND: apply.validate,
-    # 'track': 2,
-    # 'commit': 3,
-    # 'checkout': 4
-}
-
-COMMANDS = {
-    apply.COMMAND: apply.main
-}
-
-
-def validate_args(args: argparse.Namespace) -> bool:
-    """Validate passed arguments; deprecated thanks to argparse"""
-    validator = COMMAND_VALIDATORS.get(args.command, None)
-
-    if validator is None:
-        print(
-            "Error command must be one of: \n" +
-            ' '.join(COMMAND_VALIDATORS.keys())
-        )
-        return False
-
-    return validator(args)
+from conapp.commands import apply, snapshots
 
 
 def get_args(args: list) -> argparse.Namespace:
     """Build an argparser and return a Namespace"""
 
-    parser = argparse.ArgumentParser(description='conapp a simple Config Applier')
+    parser = argparse.ArgumentParser(prog='conapp', description='conapp a simple Config Applier')
     parser.set_defaults(command=None)
 
     subparsers = parser.add_subparsers(
@@ -42,8 +17,16 @@ def get_args(args: list) -> argparse.Namespace:
     )
 
     apply_group = subparsers.add_parser(apply.COMMAND, help="apply a config")
+    snapshot_group = subparsers.add_parser(snapshots.COMMAND, help="manage snapshots")
 
     apply.setup_arguments(apply_group)
+    snapshots.setup_arguments(snapshot_group)
     # TODO: Add other commands
 
-    return parser.parse_args(args)
+    args = parser.parse_args(args=args)
+
+    if args.command is None:
+        parser.print_usage()
+        sys.exit(1)
+    else:
+        return args

@@ -8,21 +8,16 @@ from conapp.url_generators import RESOLVERS
 from conapp.file_paths import get_repo_dir, get_snapshot_filename
 from conapp.validate import validate_subprocess
 from conapp.definitions import USER_HOME_DIR, DEFAULT_STRIP_COMPONENTS, Hosts
+from conapp.file_paths import check_dirs, create_dirs
 
 COMMAND = 'apply'
-
-
-def validate(args: argparse.Namespace) -> bool:
-    # Nothing extra to do yet
-    return True
-
 
 def setup_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
     """
     Setup the arguments for the apply command
     """
 
-    parser.set_defaults(command=COMMAND)
+    parser.set_defaults(command=main)
     parser.add_argument(
         '-u',
         '--user',
@@ -70,9 +65,12 @@ def setup_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
 
 def main(args: argparse.Namespace) -> None:
     """Download and Apply a snapshot"""
+    repo_dir = get_repo_dir(args.user, args.repo)
 
-    file_name = get_repo_dir(args.user, args.repo) + \
-                "/" + f"{args.user}.{args.repo}.tar.gz"
+    if not check_dirs([repo_dir]):
+        create_dirs([repo_dir])
+
+    file_name = repo_dir + "/" + f"{args.user}.{args.repo}.tar.gz"
 
     if args.no_download and os.path.isfile(file_name):
         print(f"no-download passed, applying local file {file_name}")
