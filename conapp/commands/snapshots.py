@@ -25,7 +25,13 @@ def setup_arguments(sub_parser: argparse._SubParsersAction) -> argparse.Argument
     delete_parser.set_defaults(command=delete_snapshot)
     delete_parser.add_argument(
         'snapshot',
-        help="snapshot to delete"
+        help="snapshot to delete",
+        type=int
+    )
+    delete_parser.add_argument(
+        '--dry-run',
+        action="store_true",
+        help="don't delete the file"
     )
 
     revert_parser = subparsers.add_parser('restore', help="apply a snapshot, defaults to newest")
@@ -66,7 +72,18 @@ def main(args: argparse.Namespace) -> None:
 
 def delete_snapshot(args: argparse.Namespace) -> None:
     """Delete by either filename or by index number"""
-    print(f"Deleting {args.file}")
+    try:
+        snapshot = get_snapshot_by_rel(args.snapshot)
+
+        print(f"removing snapshot: {snapshot}")
+
+        if args.dry_run:
+            print("dry-run")
+        else:
+            os.remove(snapshot)
+
+    except IndexError:
+        print_missing_snapshot_error(args)
 
 
 def restore_snapshot(args: argparse.Namespace) -> None:
@@ -77,7 +94,6 @@ def restore_snapshot(args: argparse.Namespace) -> None:
     """
     try:
         snapshot = get_snapshot_by_rel(args.snapshot)
-        print(args)
 
         if args.no_backup:
             print("no-backup")
@@ -89,8 +105,12 @@ def restore_snapshot(args: argparse.Namespace) -> None:
         else:
             apply_snapshot(snapshot)
     except IndexError:
-        print(f"Error snapshot {args.snapshot} doesn't exist")
-        print("Snapshots available are: ")
-        main(args)
-        print("\n")
-        sys.exit(1)
+        print_missing_snapshot_error(args)
+
+
+def print_missing_snapshot_error(args: argparse.Namespace) -> None:
+    print(f"Error snapshot {args.snapshot} doesn't exist")
+    print("Snapshots available are: ")
+    main(args)
+    print("\n")
+    sys.exit(1)
