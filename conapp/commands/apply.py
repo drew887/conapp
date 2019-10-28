@@ -1,14 +1,12 @@
-import subprocess
 import os
 import argparse
-import urllib.request
 import sys
 
 from conapp.url_generators import RESOLVERS
-from conapp.file_paths import get_repo_dir, get_snapshot_filename
-from conapp.validate import validate_subprocess
-from conapp.definitions import USER_HOME_DIR, DEFAULT_STRIP_COMPONENTS, Hosts
+from conapp.file_paths import get_repo_dir
+from conapp.definitions import Hosts
 from conapp.file_paths import check_dirs, create_dirs
+from conapp.file_ops import apply_snapshot, create_snapshot, download_file
 
 COMMAND = 'apply'
 
@@ -62,6 +60,8 @@ def setup_arguments(sub_parser) -> argparse.ArgumentParser:
         help="Don't actually run"
     )
 
+    #TODO: Add in a --no-apply flag to have it just download
+
     return parser
 
 
@@ -92,80 +92,3 @@ def main(args: argparse.Namespace) -> None:
         create_snapshot(file_name)
         apply_snapshot(file_name)
 
-
-def apply_snapshot(file_name: str) -> None:
-    """Given file_name use tar to apply it to the users home directory"""
-
-    print(f"Applying snapshot {file_name}")
-
-    validate_subprocess(
-        subprocess.run([
-            'tar',
-            '-C',
-            USER_HOME_DIR,
-            DEFAULT_STRIP_COMPONENTS,
-            '--show-transformed-names',
-            '-zvxf',
-            file_name,
-        ])
-    )
-
-
-def create_snapshot(file_name):
-    get_file_names_command = [
-        "tar",
-        DEFAULT_STRIP_COMPONENTS,
-        '--show-transformed-names',
-        '-tf',
-        file_name
-    ]
-    get_file_names_command_result = subprocess.run(
-        get_file_names_command,
-        text=True,
-        capture_output=True
-    )
-
-    validate_subprocess(get_file_names_command_result)
-
-    files = list(
-        filter(
-            lambda file_path: os.path.isfile(
-                os.path.expanduser(f"~/{file_path}")),
-            get_file_names_command_result.stdout.split()
-        )
-    )
-
-    if len(files) > 0:
-        snapshot_name = get_snapshot_filename()
-        backup_command = [
-                             'tar',
-                             '-C',
-                             USER_HOME_DIR,
-                             '-czvf',
-                             snapshot_name,
-                         ] + files
-
-        print(f"Local files would get overridden, creating backup of: {' '.join(files)}")
-
-        validate_subprocess(subprocess.run(
-            backup_command,
-            text=True,
-            capture_output=True
-        ))
-
-        print(f"Successfully backed up files to {snapshot_name}")
-
-    else:
-        print("No files will be overridden, not creating backup")
-
-
-def download_file(file_name: str, url: str) -> None:
-    """Attempt to download a file or exit"""
-
-    try:
-        print(f"Attempting to download {url}")
-        urllib.request.urlretrieve(url, file_name)
-        print(f"Success, downloaded to {file_name}")
-    except urllib.request.HTTPError as ex:
-        print(f"Error occurred, does {url} exist?\n{ex}")
-        sys.exit(-1)
