@@ -1,90 +1,35 @@
 import argparse
+import sys
 
-from conapp.definitions import *
+from conapp.commands import apply, snapshots
 
-
-def validate_apply(args: argparse.Namespace) -> bool:
-    # Nothing extra to do yet
-    return True
-
-
-APPLY_COMMAND = 'apply'
-
-COMMANDS = {
-    APPLY_COMMAND: validate_apply,
-    # 'track': 2,
-    # 'commit': 3,
-    # 'checkout': 4
-}
+COMMANDS = [
+    apply,
+    snapshots
+]
 
 
-def validate_args(args: argparse.Namespace) -> bool:
-    command = COMMANDS.get(args.command, None)
+def get_args(args: list) -> argparse.Namespace:
+    """Build an argparser and return a Namespace"""
 
-    if command is None:
-        print(
-            "Error command must be one of: \n" +
-            ' '.join(COMMANDS.keys())
-        )
-        return False
-
-    return command(args)
-
-
-def get_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description='conapp a simple Config Applier')
+    parser = argparse.ArgumentParser(prog='conapp', description='conapp a simple Config Applier')
     parser.set_defaults(command=None)
 
-    subparsers = parser.add_subparsers(
+    sub_parser = parser.add_subparsers(
         title="Commands",
         description="Valid commands",
         help="sub-command help",
     )
 
-    apply_group = subparsers.add_parser(APPLY_COMMAND, help="apply a config")
+    for command in COMMANDS:
+        command.setup_arguments(sub_parser)
 
-    setup_apply_arguments(apply_group)
     # TODO: Add other commands
 
-    return parser.parse_args()
+    args = parser.parse_args(args=args)
 
-
-def setup_apply_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
-    parser.set_defaults(command=APPLY_COMMAND)
-    parser.add_argument(
-        '-u',
-        '--user',
-        required=True,
-        help='username to pull from'
-    )
-    parser.add_argument(
-        '-r',
-        '--repo',
-        default='config',
-        help='repo name to pull, defaults to config'
-    )
-    parser.add_argument(
-        '--no-download',
-        action='store_true',
-        help='Use already downloaded copy'
-    )
-    parser.add_argument(
-        '-b',
-        '--bitbucket',
-        action='store_const',
-        dest='host',
-        default=Hosts.GITHUB,
-        const=Hosts.BITBUCKET,
-        help='pull from bitbucket'
-    )
-    parser.add_argument(
-        '-g',
-        '--github',
-        action='store_const',
-        dest='host',
-        default=Hosts.GITHUB,
-        const=Hosts.GITHUB,
-        help='pull from bitbucket'
-    )
-
-    return parser
+    if args.command is None:
+        parser.print_usage()
+        sys.exit(1)
+    else:
+        return args
