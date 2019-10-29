@@ -38,16 +38,16 @@ def create_snapshot(file_name):
     ]
     get_file_names_command_result = subprocess.run(
         get_file_names_command,
-        text=True,
-        capture_output=True
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        universal_newlines=True,
     )
 
     validate_subprocess(get_file_names_command_result)
 
     files = list(
         filter(
-            lambda file_path: os.path.isfile(
-                os.path.expanduser(f"~/{file_path}")),
+            lambda file_path: os.path.isfile(os.path.expanduser(f"~/{file_path}")),
             get_file_names_command_result.stdout.split()
         )
     )
@@ -55,19 +55,20 @@ def create_snapshot(file_name):
     if len(files) > 0:
         snapshot_name = get_snapshot_filename()
         backup_command = [
-                             'tar',
-                             '-C',
-                             USER_HOME_DIR,
-                             '-czvf',
-                             snapshot_name,
-                         ] + files
+            'tar',
+            '-C',
+            USER_HOME_DIR,
+            '-czvf',
+            snapshot_name,
+        ] + files
 
         print(f"Local files would get overridden, creating backup of: {' '.join(files)}")
 
         validate_subprocess(subprocess.run(
             backup_command,
-            text=True,
-            capture_output=True
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True,
         ))
 
         print(f"Successfully backed up files to {snapshot_name}")

@@ -90,5 +90,8 @@ def main(args: argparse.Namespace) -> None:
         print(f"dry run, applying {file_name}")
     else:
         create_snapshot(file_name)
-        apply_snapshot(file_name)
 
+        if input("About to override files, really apply? [y/N]: ") == 'y':
+            apply_snapshot(file_name)
+        else:
+            print(f"Not applying {file_name}")
