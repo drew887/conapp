@@ -5,8 +5,8 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="conapp",
-    version="0.0.4",
-    author="drew887 Andrew Mcdonald",
+    version="0.0.5",
+    author="drew887 <Andrew Mcdonald>",
     author_email="drew887121@gmail.com",
     description="A simple config applier",
     long_description=long_description,

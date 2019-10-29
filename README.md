@@ -12,3 +12,8 @@ The above will:
   * take a backup of all the files that are listed in the tarball that you
     also have locally on your system
   * untar the repo into your home directory.
+
+#### Available commands:
+
+  * `apply`: downloads and apply's tarballs
+  * `snapshots`: Used to manage local backup snapshots
