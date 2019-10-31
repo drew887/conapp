@@ -4,7 +4,7 @@ A simple project for applying config files from repos/tar files
 
 #### Example command:
 ```
-conapp apply -u drew887 -b
+conapp config -u drew887 -b
 ```
 
 The above will:
@@ -15,5 +15,5 @@ The above will:
 
 #### Available commands:
 
-  * `apply`: downloads and apply's tarballs
+  * `config`: downloads and apply's tarballs
   * `snapshots`: Used to manage local backup snapshots
