@@ -132,7 +132,8 @@ def list_configs(args: argparse.Namespace) -> None:
             repos = []
 
             for user_repo_dir in os.scandir(user_dir.path):
-                if user_repo_dir.is_dir and len(os.listdir(user_repo_dir.path)) > 0:
+                if user_repo_dir.is_dir \
+                   and (f"{user_dir.name}.{user_repo_dir.name}.tar.gz" in os.listdir(user_repo_dir.path)):
                     repos.append(user_repo_dir.name)
 
             if len(repos) > 0:
@@ -145,12 +146,12 @@ def list_configs(args: argparse.Namespace) -> None:
         else:
             print(f"user {args.user} has no downloaded configs")
     else:
-        print("Downloaded configs are: ")
+        print("Downloaded configs are: \n")
         for user, repos in users.items():
             print_user(user, repos)
-            print("---")
+            print("")
 
 def print_user(user: str, repos: list) -> None:
-    print(f"{user}:")
+    print(f"- {user}:")
     for repo in repos:
-        print(f" {repo}")
+        print(f"  * {repo}")
