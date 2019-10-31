@@ -14,7 +14,7 @@ def setup_arguments(sub_parser: argparse._SubParsersAction) -> argparse.Argument
     parser.set_defaults(command=main)
 
     subparsers = parser.add_subparsers(
-        title="snapshot commands",
+        title=f"{COMMAND} commands",
         description="commands for managing snapshots"
     )
 
