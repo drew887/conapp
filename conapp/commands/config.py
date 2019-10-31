@@ -9,35 +9,46 @@ from conapp.file_paths import check_dirs, create_dirs, get_config_dir, CONFIG_DI
 from conapp.file_ops import apply_snapshot, create_snapshot, download_file
 
 
-#TODO: Rename this from apply to like config and have apply be a subcommand
-COMMAND = 'apply'
+COMMAND = 'config'
+COMMAND_HELP = "manage downloading and applying configs"
 
 
-def setup_arguments(sub_parser) -> argparse.ArgumentParser:
+def setup_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
     """
-    Setup the arguments for the apply command
+    Setup the arguments for the config command
     """
-    parser = sub_parser.add_parser(COMMAND, help="apply a config")
+    parser.set_defaults(command=lambda x: parser.print_usage())
 
-    parser.set_defaults(command=main)
-    parser.add_argument(
+    subparsers = parser.add_subparsers(
+        title=f"{COMMAND} commands",
+        description="sub commands for managing configs"
+    )
+
+    apply_parser = subparsers.add_parser(
+        'apply',
+        help='download and apply a config from github or bitbucket'
+    )
+
+    apply_parser.set_defaults(command=main)
+
+    apply_parser.add_argument(
         '-u',
         '--user',
         required=True,
         help='username to pull from'
     )
-    parser.add_argument(
+    apply_parser.add_argument(
         '-r',
         '--repo',
         default='config',
         help='repo name to pull, defaults to config'
     )
-    parser.add_argument(
+    apply_parser.add_argument(
         '--no-download',
         action='store_true',
         help='Use already downloaded copy'
     )
-    parser.add_argument(
+    apply_parser.add_argument(
         '-b',
         '--bitbucket',
         action='store_const',
@@ -46,7 +57,7 @@ def setup_arguments(sub_parser) -> argparse.ArgumentParser:
         const=Hosts.BITBUCKET,
         help='pull from bitbucket'
     )
-    parser.add_argument(
+    apply_parser.add_argument(
         '-g',
         '--github',
         action='store_const',
@@ -55,21 +66,22 @@ def setup_arguments(sub_parser) -> argparse.ArgumentParser:
         const=Hosts.GITHUB,
         help='pull from bitbucket'
     )
-    parser.add_argument(
+    apply_parser.add_argument(
         '--no-apply',
         action="store_true",
         dest="no_apply",
         help="Don't actually run"
     )
 
-    subparsers = parser.add_subparsers(
-        title=f"{COMMAND} commands",
-        description="sub commands for managing configs"
-    )
-
     list_parser = subparsers.add_parser('list', help="list downloaded configs")
 
     list_parser.set_defaults(command=list_configs)
+
+    list_parser.add_argument(
+        '-u',
+        '--user',
+        help='username to pull from'
+    )
 
     return parser
 
@@ -81,7 +93,10 @@ def main(args: argparse.Namespace) -> None:
     if not check_dirs([repo_dir]):
         create_dirs([repo_dir])
 
-    file_name = repo_dir + "/" + f"{args.user}.{args.repo}.tar.gz"
+    file_name = os.path.join(
+        repo_dir,
+        f"{args.user}.{args.repo}.tar.gz"
+    )
 
     if args.no_download and os.path.isfile(file_name):
         print(f"no-download passed, applying local file {file_name}")
@@ -126,11 +141,12 @@ def list_configs(args: argparse.Namespace) -> None:
     if args.user is not None:
         if args.user in users:
             print_user(args.user, users[args.user])
+            print(get_repo_dir(args.user, users[args.user][0]))
         else:
             print(f"user {args.user} has no downloaded configs")
     else:
         print("Downloaded configs are: ")
-        for user, repos in users:
+        for user, repos in users.items():
             print_user(user, repos)
             print("---")
 
