@@ -140,7 +140,7 @@ def main(args: argparse.Namespace) -> None:
         if os.path.isfile(link_name):
             os.remove(link_name)
 
-        os.symlink(
+        os.link(
             snapshot,
             link_name
         )
