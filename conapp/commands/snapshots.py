@@ -6,15 +6,17 @@ from conapp.file_paths import get_config_dir, CONFIG_DIR_SNAPSHOT, get_snapshot_
 from conapp.file_ops import create_snapshot, apply_snapshot
 
 COMMAND = 'snapshots'
+COMMAND_HELP = "manage snapshots"
 
-
-def setup_arguments(sub_parser: argparse._SubParsersAction) -> argparse.ArgumentParser:
-    parser = sub_parser.add_parser(COMMAND, help="manage snapshots")
+def setup_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
+    """
+    Setup arguments for snapshots command
+    """
 
     parser.set_defaults(command=main)
 
     subparsers = parser.add_subparsers(
-        title="snapshot commands",
+        title=f"{COMMAND} commands",
         description="commands for managing snapshots"
     )
 

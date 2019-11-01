@@ -1,10 +1,10 @@
 import argparse
 import sys
 
-from conapp.commands import apply, snapshots
+from conapp.commands import config, snapshots
 
 COMMANDS = [
-    apply,
+    config,
     snapshots
 ]
 
@@ -22,7 +22,12 @@ def get_args(args: list) -> argparse.Namespace:
     )
 
     for command in COMMANDS:
-        command.setup_arguments(sub_parser)
+        command.setup_arguments(
+            sub_parser.add_parser(
+                command.COMMAND,
+                help=command.COMMAND_HELP
+            )
+        )
 
     # TODO: Add other commands
 
