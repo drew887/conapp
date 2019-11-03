@@ -39,26 +39,12 @@ def apply_snapshot(file_name: str, strip_top_level=False) -> None:
 
 
 def create_snapshot(file_name: str) -> Optional[str]:
-    get_file_names_command = [
-        "tar",
-        DEFAULT_STRIP_COMPONENTS,
-        '--show-transformed-names',
-        '-tf',
-        file_name
-    ]
-    get_file_names_command_result = subprocess.run(
-        get_file_names_command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        universal_newlines=True,
-    )
-
-    validate_subprocess(get_file_names_command_result)
+    file_names_result = get_files_from_tar(file_name, True)
 
     files = list(
         filter(
             lambda file_path: os.path.isfile(os.path.expanduser(f"~/{file_path}")),
-            get_file_names_command_result.stdout.split()
+            file_names_result.stdout.split()
         )
     )
 
@@ -87,6 +73,26 @@ def create_snapshot(file_name: str) -> Optional[str]:
     else:
         print("No files will be overridden, not creating backup")
         return None
+
+
+def get_files_from_tar(file_name: str, strip_top_level=False) -> subprocess.CompletedProcess:
+    get_file_names_command = [
+        "tar",
+        DEFAULT_STRIP_COMPONENTS if strip_top_level else '',
+        '--show-transformed-names',
+        '-tf',
+        file_name
+    ]
+    result = subprocess.run(
+        get_file_names_command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        universal_newlines=True,
+    )
+
+    validate_subprocess(result)
+
+    return result
 
 
 def download_file(file_name: str, url: str) -> None:

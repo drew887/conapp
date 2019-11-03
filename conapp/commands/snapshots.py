@@ -36,21 +36,21 @@ def setup_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
         help="don't delete the file"
     )
 
-    revert_parser = subparsers.add_parser('restore', help="apply a snapshot, defaults to newest")
-    revert_parser.set_defaults(command=restore_snapshot)
-    revert_parser.add_argument(
+    apply_parser = subparsers.add_parser('apply', help="apply a snapshot, defaults to newest")
+    apply_parser.set_defaults(command=restore_snapshot)
+    apply_parser.add_argument(
         'snapshot',
         default=0,
         help="The snapshot to apply, defaults to 0",
         nargs="?",
         type=int
     )
-    revert_parser.add_argument(
+    apply_parser.add_argument(
         '--no-backup',
         action='store_true',
         help="Don't create a snapshot before restoring. Use at own risk!"
     )
-    revert_parser.add_argument(
+    apply_parser.add_argument(
         '--no-apply',
         action='store_true',
         help="Don't apply snapshot, will still create a backup"
