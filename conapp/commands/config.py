@@ -6,7 +6,8 @@ from conapp.url_generators import RESOLVERS
 from conapp.file_paths import get_repo_dir
 from conapp.definitions import Hosts
 from conapp.file_paths import check_dirs, create_dirs, get_config_dir, CONFIG_DIR_REPO
-from conapp.file_ops import apply_snapshot, create_snapshot, download_file, apply_config
+from conapp.file_ops import apply_snapshot, create_snapshot, download_file, \
+    apply_config, get_files_from_tar
 
 BACKUP_FILE_NAME = "backup.tar.gz"
 
@@ -194,6 +195,24 @@ def undo_config(args: argparse.Namespace) -> None:
         repo_dir,
         BACKUP_FILE_NAME
     )
+    config_file_name = os.path.join(
+        repo_dir,
+        f"{args.user}.{args.repo}.tar.gz"
+    )
+
+    if input("Create a backup before undo?: ") == 'y':
+        create_snapshot(config_file_name)
+
+    if input(f"Remove all files pointed to by {config_file_name} before restore?: ") == 'y':
+        files = filter(
+            lambda file_path: os.path.isfile(os.path.expanduser(f"~/{file_path}")),
+            get_files_from_tar(config_file_name, True).stdout.split()
+        )
+
+        for file in files:
+            path = f"~/{file}"
+            print(f"removing {path}")
+            os.remove(os.path.expanduser(path))
 
     if os.path.isfile(backup_name) \
             and input(f"about to restore {backup_name}\nContinue? [y/N]") == 'y':
