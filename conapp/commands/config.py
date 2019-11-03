@@ -4,7 +4,7 @@ import sys
 
 from conapp.url_generators import RESOLVERS
 from conapp.file_paths import get_repo_dir
-from conapp.definitions import Hosts
+from conapp.definitions import Hosts, PROGRAM_NAME
 from conapp.file_paths import check_dirs, create_dirs, get_config_dir, CONFIG_DIR_REPO
 from conapp.file_ops import apply_snapshot, create_snapshot, download_file, \
     apply_config, get_files_from_tar
@@ -148,6 +148,8 @@ def main(args: argparse.Namespace) -> None:
 
         if input("About to override files, really apply? [y/N]: ") == 'y':
             apply_config(file_name)
+            print("config applied successfully.\nYou can undo this by running:")
+            print(f"{PROGRAM_NAME} config undo -u {args.user} -r {args.repo}")
         else:
             print(f"Not applying {file_name}")
 
