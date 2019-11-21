@@ -28,5 +28,18 @@ currently managing the files `~/.tmux.conf` and `$XDG_CONFIG_HOME/i3/config`. Wh
         - Bitbucket creates a top level, pass `--strip 1` to tar to kill off top level directory
 
     - `conapp track filename` - copies/links file into local repo
-      - find thing -type f will handle both cases if they pass in a directory or file
+      - ~find thing -type f will handle both cases if they pass in a directory or file~
+      - `track info --dir` echo out path to local dir. Idea being that `pushd $(conapp track dir)` would let you move into the directory
+      - `track checkout` cases:
+        + make sure to check and warn about the dependancy on `git`
+        + upon "checkout" reverse hardlink all the repo files onto file path.
+          * This should prompt if user wants to override local files or checked out files. IE repo and local contain ~/.emacs,
+            - if user says yes, then local copy of ~/.emacs gets deleted and a hardlink is made from the repo version,
+            - if user says no, then repo copy of ~/.emacs gets deleted and hardlink is made in repo from local version
+        + upon "checkout" of different repo, prompt if user wants to delete or keep all files managed by repo
+          * Note that `git ls-files` should give us what we want here
+          * after descision is made case should procede same as "clean" case
+
+
+
     - `conapp checkout username [--repo=]` attempt to checkout repo to have become managed tracking dir

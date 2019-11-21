@@ -8,6 +8,7 @@ CONFIG_DIR = os.path.join(
 )
 CONFIG_DIR_REPO = "repo"
 CONFIG_DIR_SNAPSHOT = "snapshots"
+CONFIG_DIR_TRACK = "track"
 
 
 def get_config_dir(dir: str) -> str:
@@ -15,10 +16,11 @@ def get_config_dir(dir: str) -> str:
     return os.path.join(CONFIG_DIR, dir)
 
 
-CONFIG_DIRS = [
+CONFIG_DIRS = (
     get_config_dir(CONFIG_DIR_SNAPSHOT),
-    get_config_dir(CONFIG_DIR_REPO)
-]
+    get_config_dir(CONFIG_DIR_REPO),
+    get_config_dir(CONFIG_DIR_TRACK)
+)
 
 
 # TODO: Abstract repo default into a constant somewhere
