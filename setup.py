@@ -1,11 +1,12 @@
 import setuptools
+from conapp import VERSION
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="conapp",
-    version="0.1.1",
+    version=VERSION,
     author="drew887 <Andrew Mcdonald>",
     author_email="drew887121@gmail.com",
     description="A simple config applier",
