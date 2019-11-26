@@ -38,7 +38,14 @@ def add_command(args: argparse.Namespace) -> None:
     if not os.path.exists(args.file):
         print(f"Error {args.file} doesn't exist")
 
-    print(os.path.abspath(args.file))
+    abs_path = os.path.abspath(args.file)
+    home_path = os.path.expanduser("~")
+    print(abs_path)
+
+    if abs_path.startswith(home_path):
+        relative_home_path = abs_path[len(home_path):]
+
+        print(relative_home_path)
 
     pass
 

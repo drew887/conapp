@@ -2,7 +2,7 @@ import os
 import argparse
 import sys
 
-from conapp.file_paths import get_config_dir, CONFIG_DIR_SNAPSHOT, get_snapshot_by_rel
+from conapp.file_paths import get_config_dir, CONFIG_SNAPSHOT_DIR, get_snapshot_by_rel
 from conapp.file_ops import create_snapshot, apply_snapshot
 
 COMMAND = 'snapshots'
@@ -61,11 +61,9 @@ def setup_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
 
 def main(args: argparse.Namespace) -> None:
     """List out snapshots available to apply"""
-    snapshot_dir = get_config_dir(CONFIG_DIR_SNAPSHOT)
+    print(f"list of available snapshots at: {CONFIG_SNAPSHOT_DIR}")
 
-    print(f"list of available snapshots at: {snapshot_dir}")
-
-    files = os.listdir(snapshot_dir)
+    files = os.listdir(CONFIG_SNAPSHOT_DIR)
     files.sort(reverse=True)
 
     for num, file in enumerate(files):
