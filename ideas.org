@@ -30,6 +30,8 @@ currently managing the files `~/.tmux.conf` and `$XDG_CONFIG_HOME/i3/config`. Wh
     - `conapp track filename` - copies/links file into local repo
       - This whole thing can be simplified by using a git bare checkout and having an `env` command to export an alias and other useful things.
         - see: https://www.atlassian.com/git/tutorials/dotfiles for an explanation
+        - No longer need any add commands and can simply pass off to git
+        - Command becomes `conapp checkout --user ...etc`
       - Old Ideas
         - ~find thing -type f will handle both cases if they pass in a directory or file~
         - `track info --dir` echo out path to local dir. Idea being that `pushd $(conapp track dir)` would let you move into the directory
