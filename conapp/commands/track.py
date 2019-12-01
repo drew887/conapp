@@ -6,12 +6,13 @@ import shutil
 from conapp.file_paths import CONFIG_TRACK_DIR
 from conapp.validate import validate_subprocess
 from conapp.url_generators import CHECKOUT_RESOLVERS
-from conapp.definitions import Hosts
+from conapp.definitions import Hosts, PROGRAM_NAME
 
 COMMAND = "local"
 COMMAND_HELP = "Command for managing a local repo"
 
-TRACK_REPO_FOLDER_NAME = 'repo'
+TRACK_REPO_FOLDER_NAME = "repo"
+REPO_FOLDER = os.path.join(CONFIG_TRACK_DIR, TRACK_REPO_FOLDER_NAME)
 
 
 def setup_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
@@ -21,7 +22,7 @@ def setup_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
 
     checkout_parser = sub_parser.add_parser(
         "checkout",
-        help="checkout a bare repo"
+        help="Checkout a repo locally and bare"
     )
     checkout_parser.set_defaults(command=checkout_command)
 
@@ -56,6 +57,26 @@ def setup_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
         help='pull from bitbucket'
     )
 
+    info_parser = sub_parser.add_parser(
+        "info",
+        help="Get info about the local repo"
+    )
+
+    info_parser.set_defaults(
+        command=info_command
+    )
+    info_parser.add_argument(
+        "-d",
+        "--details",
+        help="Print some details on how to use the bare repo",
+        action="store_true"
+    )
+    info_parser.add_argument(
+        "--alias-name",
+        default="config",
+        help="name for the alias to export"
+    )
+
     return parser
 
 
@@ -65,13 +86,11 @@ def checkout_command(args: argparse.Namespace) -> None:
     :param args:
     :return:
     """
-    repo_folder = os.path.join(CONFIG_TRACK_DIR, TRACK_REPO_FOLDER_NAME)
-
-    if os.path.exists(repo_folder):
+    if os.path.exists(REPO_FOLDER):
         if input("Repo folder is not empty, delete to continue? [y/N]:").lower() == "y":
-            shutil.rmtree(repo_folder, True)
+            shutil.rmtree(REPO_FOLDER, True)
         else:
-            print(f"Repo dir not empty, aborting.\nRepo dir = {repo_folder}")
+            print(f"Repo dir not empty, aborting.\nRepo dir = {REPO_FOLDER}")
             return
 
     command = [
@@ -79,7 +98,16 @@ def checkout_command(args: argparse.Namespace) -> None:
         'clone',
         '--bare',
         CHECKOUT_RESOLVERS.get(args.host)(args.user, args.repo),
-        repo_folder,
+        REPO_FOLDER,
+    ]
+
+    untrack_command = [
+        'git',
+        f"--git-dir={REPO_FOLDER}",
+        'config',
+        '--local',
+        'status.showUntrackedFiles',
+        'no'
     ]
 
     print(f"about to execute '{' '.join(command)}'")
@@ -88,7 +116,38 @@ def checkout_command(args: argparse.Namespace) -> None:
         validate_subprocess(
             subprocess.run(command)
         )
-        # TODO: Add output of what to do next (ie call `conapp local env`) to
-        #  setup local stuff. Need to do more than bash eventually
+        # TODO: Add an flag check around this
+        validate_subprocess(
+            subprocess.run(untrack_command)
+        )
 
+        print(f"\nYou can run `{PROGRAM_NAME} {COMMAND} info` to get more info on"
+              f" how to use your bare repository.\n")
+    pass
+
+
+def info_command(args: argparse.Namespace) -> None:
+    # TODO: Add output of what to do next (ie call `conapp local env`) to
+    #  setup local stuff. Need to do more than bash eventually
+    if not os.path.exists(REPO_FOLDER):
+        print("You haven't checked out a repo yet!\n"
+              f"see `{PROGRAM_NAME} {COMMAND} checkout` for more info")
+        return
+
+    alias_command = f"alias {args.alias_name}='git --work-tree={os.path.expanduser('~/')} --git-dir={os.path.abspath(REPO_FOLDER)}'"
+
+    if args.details:
+        print(
+            "You have checked out a repo as a bare repository! "
+            "This allows you to manage a repo with a working dir that is not next "
+            "to the git directory. Essentially this lets us use git to manage our "
+            "home folder without having a .git at the top level of it.\n\n"
+            "See https://www.atlassian.com/git/tutorials/dotfiles for a great rundown on how this works\n\n"
+            "If you rerun this command without the --details flag, it will print"
+            " an alias for use in shells that will allow you to use the bare repo"
+            " without all the extra flags being passed to git. IE:\n"
+            f"`{args.alias_name} status`"
+        )
+    else:
+        print(alias_command)
     pass
