@@ -1,6 +1,7 @@
 import os
 import argparse
 import subprocess
+import shutil
 
 from conapp.file_paths import CONFIG_TRACK_DIR
 from conapp.validate import validate_subprocess
@@ -9,6 +10,8 @@ from conapp.definitions import Hosts
 
 COMMAND = "local"
 COMMAND_HELP = "Command for managing a local repo"
+
+TRACK_REPO_FOLDER_NAME = 'repo'
 
 
 def setup_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
@@ -62,20 +65,26 @@ def checkout_command(args: argparse.Namespace) -> None:
     :param args:
     :return:
     """
+    repo_folder = os.path.join(CONFIG_TRACK_DIR, TRACK_REPO_FOLDER_NAME)
+
+    if os.path.exists(repo_folder):
+        if input("Repo folder is not empty, delete to continue? [y/N]:").lower() == "y":
+            shutil.rmtree(repo_folder, True)
+        else:
+            print(f"Repo dir not empty, aborting.\nRepo dir = {repo_folder}")
+            return
+
     command = [
         'git',
         'clone',
         '--bare',
         CHECKOUT_RESOLVERS.get(args.host)(args.user, args.repo),
-        os.path.join(
-            CONFIG_TRACK_DIR,
-            "track"
-        ),
+        repo_folder,
     ]
 
     print(f"about to execute '{' '.join(command)}'")
 
-    if input("Precede [y/N]? ") == "y":
+    if input("Proceed [y/N]? ").lower() == "y":
         validate_subprocess(
             subprocess.run(command)
         )
