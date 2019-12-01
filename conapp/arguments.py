@@ -1,12 +1,12 @@
 import argparse
 import sys
 
-from conapp.commands import config, snapshots, track
+from conapp.commands import config, snapshots, local
 
 COMMANDS = [
     config,
     snapshots,
-    track
+    local
 ]
 
 
