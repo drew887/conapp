@@ -8,7 +8,7 @@ CONFIG_DIR = os.path.join(
 )
 REPO_DIR = "repo"
 SNAPSHOT_DIR = "snapshots"
-TRACK_DIR = "track"
+TRACK_DIR = "local"
 
 
 def get_config_dir(config_dir: str) -> str:
