@@ -2,6 +2,7 @@ import argparse
 import sys
 
 from conapp.commands import config, snapshots, local
+from conapp import VERSION
 
 COMMANDS = [
     config,
@@ -14,7 +15,12 @@ def get_args(args: list) -> argparse.Namespace:
     """Build an argparser and return a Namespace"""
 
     parser = argparse.ArgumentParser(prog='conapp', description='conapp a simple Config Applier')
-    parser.set_defaults(command=None)
+
+    parser.add_argument(
+        "--version",
+        action="store_true",
+        help="Print version info"
+    )
 
     sub_parser = parser.add_subparsers(
         title="Commands",
@@ -30,10 +36,15 @@ def get_args(args: list) -> argparse.Namespace:
             )
         )
 
-    args = parser.parse_args(args=args)
+    def default(args: argparse.Namespace) -> None:
+        if args.version:
+            print(VERSION)
+            exit(0)
 
-    if args.command is None:
         parser.print_usage()
         sys.exit(1)
-    else:
-        return args
+
+    # TODO: Add other commands
+    parser.set_defaults(command=default)
+
+    return parser.parse_args(args=args)
