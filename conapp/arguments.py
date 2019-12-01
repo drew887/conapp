@@ -1,12 +1,13 @@
 import argparse
 import sys
 
-from conapp.commands import config, snapshots
+from conapp.commands import config, snapshots, local
 from conapp import VERSION
 
 COMMANDS = [
     config,
-    snapshots
+    snapshots,
+    local
 ]
 
 

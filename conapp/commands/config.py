@@ -5,7 +5,7 @@ import sys
 from conapp.url_generators import RESOLVERS
 from conapp.file_paths import get_repo_dir
 from conapp.definitions import Hosts, PROGRAM_NAME
-from conapp.file_paths import check_dirs, create_dirs, get_config_dir, CONFIG_DIR_REPO
+from conapp.file_paths import check_dirs, create_dirs, get_config_dir, CONFIG_REPO_DIR,REPO_DIR
 from conapp.file_ops import apply_snapshot, create_snapshot, download_file, \
     apply_config, get_files_from_tar
 
@@ -155,12 +155,11 @@ def main(args: argparse.Namespace) -> None:
 
 
 def list_configs(args: argparse.Namespace) -> None:
-    repo_dir = get_config_dir(CONFIG_DIR_REPO)
     users = {}
 
     # NOTE: This could probably be done with os.walk and save some fs calls
     #  however there would be a bunch of additional checking needed to be done since its a flat list instead of nested w
-    for user_dir in os.scandir(repo_dir):
+    for user_dir in os.scandir(CONFIG_REPO_DIR):
         if user_dir.is_dir():
             repos = []
 
