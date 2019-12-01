@@ -57,21 +57,21 @@ def setup_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
         help='pull from bitbucket'
     )
 
-    info_parser = sub_parser.add_parser(
-        "info",
+    alias_parser = sub_parser.add_parser(
+        "alias",
         help="Get info about the local repo"
     )
 
-    info_parser.set_defaults(
-        command=info_command
+    alias_parser.set_defaults(
+        command=alias_command
     )
-    info_parser.add_argument(
+    alias_parser.add_argument(
         "-d",
         "--details",
         help="Print some details on how to use the bare repo",
         action="store_true"
     )
-    info_parser.add_argument(
+    alias_parser.add_argument(
         "--alias-name",
         default="config",
         help="name for the alias to export"
@@ -121,12 +121,12 @@ def checkout_command(args: argparse.Namespace) -> None:
             subprocess.run(untrack_command)
         )
 
-        print(f"\nYou can run `{PROGRAM_NAME} {COMMAND} info` to get more info on"
+        print(f"\nYou can run `{PROGRAM_NAME} {COMMAND} alias --details` to get more info on"
               f" how to use your bare repository.\n")
     pass
 
 
-def info_command(args: argparse.Namespace) -> None:
+def alias_command(args: argparse.Namespace) -> None:
     # TODO: Add output of what to do next (ie call `conapp local env`) to
     #  setup local stuff. Need to do more than bash eventually
     if not os.path.exists(REPO_FOLDER):
